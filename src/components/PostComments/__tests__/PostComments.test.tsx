@@ -1,6 +1,6 @@
 import Post from "..";
 
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 
 describe('Testes para os componentes', () => {
     test('Deve renderizar corretamente comentar', () => {
@@ -14,7 +14,20 @@ describe('Testes para os componentes', () => {
         })
 
         test('Deve renderizar corretamente form', () => {
+            render(<Post />);
+            expect(screen.getByTestId('form-test')).toBeInTheDocument();
+        })
+
+        test('Deve adicionar comentários corretamente', () => {
             render(<Post />)
-            expect(screen.getByTestId('form-test')).toBeInTheDocument()
+            fireEvent.change(screen.getByTestId('comment-input'), { target: { value: 'Primeiro Comentário' } })
+            fireEvent.click(screen.getByText('Comentar'))
+
+            fireEvent.change(screen.getByTestId('comment-input'), { target: { value: 'Segundo Comentário' } })
+            fireEvent.click(screen.getByText('Comentar'))
+            
+            const commentList = screen.getByTestId('ul-test')
+            expect(commentList).toHaveTextContent('Primeiro Comentário')
+            expect(commentList).toHaveTextContent('Segundo Comentário')
             })
 })
